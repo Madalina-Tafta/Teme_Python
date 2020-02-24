@@ -1,0 +1,214 @@
+#pachetul contine 52 de carti
+#REGULI:
+#se amesteca pachetul
+#se impart cartile
+#jucatorii nu au voie sa mai amestece pachetele primite
+#se joaca cate o carte pana cand valoarile cartilor sunt egale (ex : x=x)
+#se declara razboi si fiecare jucator trebuie sa joace alte x carti
+#numaratoarea incepe dupa ce se declara razboiul,deci cartile egale nu se mai numara
+#ultima carte jucate decide castigatrul razboiului
+#se reia jocul cu o singura carte
+#castigatorul este cel care are 52 de carti in pachet
+import random
+class Carte: #am creat clasa corespunzatoare unei carti
+    def __init__(self):
+        #am creat cate o valoare si un tip pentru fiecare carte
+        self.valoare = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+        self.tip = ['de trefla', 'de romb', 'de caro', 'de pica']
+
+    def creaza_carte(self ):
+        #am creat o carte de joc ce este reprezentata print-o lista
+        #ce are ca prim element valoarea,iar ca al 2-lea element tipul
+        return [self.valoare, self.tip]
+
+
+class Pachet(Carte): #am creat clasa corespunzatoare  pachetului
+    def __init__(self):
+        super().__init__()
+        self.carti = []        # reprezinta intregul pachet
+        self.pachet_1 = []     # reprezinta pachetul dar jucatorului 1
+        self.pachet_2 = []     # reprezinta pachetul dat jucatorului 2
+
+    def creaza_pachet(self):
+        #pachetul astfel creat va fi o lista ce va contine cartile
+        #sub forma unor combinatii intre valoarea si tipul acestora
+        self.carti = [[x, y] for x in self.valoare for y in self.tip]
+
+    def amesteca_pachet(self):
+        random.shuffle(self.carti)
+        print('Pachetul initial a fost amestecat:')
+        print(self.carti)
+        return self.carti
+
+    def imparte_pachet(self, n):
+        #atributul local n face referire la pachetul jucatorului pentru care apelam functia
+        #am impartit pachetul astfel incat cartile pare sa apartina primului jucator,deoarece prima carte este pe indexul 0
+        #iar cartile impare, celui de-al 2 lea jucator
+        #jucatorii nu au voie sa mai amestece pachetele primite
+        for i in range(0, len(self.carti)):
+            if i % 2 == 0:
+                self.pachet_1.append(self.carti.pop(0))
+
+
+            else:
+                self.pachet_2.append(self.carti.pop(0))
+        #daca n=1 ne referim la pachetul jucatorului 1
+        #daca n=2 ne referim la pachetul jucatorului 2
+        #am inversat ordinea cartilor de la cap la coada
+        #deoarece prima carte primita va fi defapt ultima( cu fata in jos) si tot asa
+        #iar ultima carte primita va fi de fapt prima din pachet (cu fata in jos)
+        if n == 1:
+            self.pachet_1.reverse()
+            return self.pachet_1
+
+        else:
+            self.pachet_2.reverse()
+            return self.pachet_2
+
+
+class Jucator(Pachet):  #am creat clasa corespunzatoare jucatorului
+    def __init__(self, nume,pachet):
+        self.pachet = pachet
+        self.nume=nume
+
+    def afiseaza_pachetele(self,jucator ):
+            print("Pachetul jucatorului " + self.nume +"  este: ", self.pachet)
+            print(len(self.pachet))
+    #functie pentru a scoate de fiecare data cate o carte din pachet, incepand cu prima
+    def trage_carte(self):
+        return self.pachet.pop(0)
+
+    def joaca_carte(self, jucator_2):
+        #am creat o lista care va contine toate cartile jucate intr-o runda
+        lista=[]
+        #atat timp cat pachetele nu sunt goale,se joaca jocul
+        if (len(self.pachet) > 0 and len(jucator_2.pachet) > 0):
+            #fiecare jucator va trage cate o carte
+            c1 = self.trage_carte()
+            c2 = jucator_2.trage_carte()
+            #adaugam in lista cartile trase
+            lista.append(c1)
+            lista.append(c2)
+            print("LUPTA")
+            print('jucatorul:',jucator1.nume,'cu cartea:',str(lista[0][0]),str(lista[0][1]),'-','jucatorul:',jucator2.nume,'cu cartea:',str(lista[1][0]),str(lista[1][1]))
+            #in cazul in care avem egalitate intre valorile cartilor,se declara razboiul
+            # in functie de valoarea cartilor, atatea carti se vor trage iar din pachete
+            if (c1[0]==c2[0]):
+                print('RAZBOOOOOOOOOOOOOOI')
+                # aceste liste ajuta doar la afisare,fiecare apartine unui jucator
+                # si reprezinta cartile date din pachetul fiecaruia in jocul de razboi
+                lista1 = []
+                lista2 = []
+                #a este o variabila mai mare cu 1 decat valoarea cartilor si reprezinta totalul de carti trase dintr-un pachet in cazul razboiului
+                #deoarece in cazul razboiului se vor trage in total din pachet
+                #cu o carte mai mult decat valoarea cartilor ce declara razboi
+                a=c1[0]+1
+                #contorizam cate carti mai trebuie trase
+                contor=0
+                for i in range(a):
+                    #crestem contorul la fiecare tragere
+                    contor=contor+1
+                    #atat timp cat pachetul nu este gol si contorul este mai mic decat totalul de carti trase, se executa
+                    #s a pus conditia ca pachetul sa nu fie gol pentru situatia cad se iveste un razboi
+                    # iar unul din jucatori nu totalul de carti care trebuie date
+                    #astfel ultima sa carte va fi cea dupa care se decide castigatorul rundei
+                    #iar a 2 a conditie este pentru a nu depasi numarul de crati care trebuie trase
+                    if self.pachet != [] and contor < a:
+                        c1 = self.trage_carte()
+                        lista.append(c1)
+                        lista1.append(c1)
+                    if jucator_2.pachet != [] and contor < a:
+                        c2 = jucator_2.trage_carte()
+                        lista.append(c2)
+                        lista2.append(c2)
+
+                print('Se vor juca alte',contor-1,'carti: ')
+                print('jucatorul ',jucator1.nume,' : ',lista1)
+                print('jucatorul ',jucator2.nume,' : ',lista2)
+
+                print('cu cartile "hotaratoare": ',c1,' apartinand jucatorului ',jucator1.nume,' si  ',c2,' apartinand jucatorului ',jucator2.nume)
+
+
+
+
+            #cazul in care valoarea unei carti este mai mare decat valoarea celeilalte
+            #jucatorul cu cartea mai mare va primi cartile jucate
+            if (c1[0]>c2[0]):
+                self.pachet = self.pachet + lista
+                print('S-A INCHEIAT LUPTA, CASTICATORUL ESTE:',jucator1.nume)
+
+            else :
+                jucator_2.pachet = jucator_2.pachet + lista
+
+                print('S-A INCHEIAT LUPTA, CASTICATORUL ESTE:',jucator2.nume)
+            #stergem cartile din lista la incheierea fiecarei runde,deoarece ele apartin acum castigatorului rundei curente
+            lista.clear()
+            print("Pachetul jucatorului 1:", self.pachet)
+            print('cu numarul de carti',len(self.pachet))
+            print('Pachetul jucatorului 2:',jucator_2.pachet)
+            print('cu numarul de carti:',len(jucator_2.pachet))
+
+
+            #stabilim castigatorul intregului joc
+            #castiga jucatorul care are in pachet maximul de carti, adica 52
+            #implicit celalt jucator va avea pachetul gol
+            if len(self.pachet) ==0:
+                print("FINAL JOC!")
+                print("CASTIGATORUL JOCULUI ESTE: ",jucator2.nume )
+
+
+            elif len(jucator_2.pachet) ==0:
+                print("FINAL JOC!")
+                print("CASTIGATORUL JOCULUI ESTE:  ",jucator1.nume )
+            return self.pachet
+    #aceasta functie ajuta la incheierea jocului
+    def incheiere(self):
+        #c este o variabila ce ia valoarea 1 daca pachetul nu este gol
+        #si valoarea de 0 daca pachetul este gol
+        if (len(self.pachet)!=0):
+            c=1
+            return c
+        else:
+            c=0
+            return c
+
+
+
+        
+        
+#construim cartile
+obj1 = Carte()
+obj1.creaza_carte()
+#construimm pachetul
+obj2 = Pachet()
+obj2.creaza_pachet()
+obj2.amesteca_pachet()
+#construim pachetele
+pachet1 = obj2.imparte_pachet(1)
+pachet2 = obj2.imparte_pachet(2)
+#numele jucatorilor vor fi introduse de la tastatura
+nume1=input('introduceti numele primului jucator: ')
+nume2=input('introduceti numele celui de-al 2 lea jucator: ')
+print('CARTILE AU FOST IMPARTITE:')
+jucator1 = Jucator(nume1,pachet1)
+jucator1.afiseaza_pachetele(nume1)
+jucator2 = Jucator(nume2,pachet2)
+jucator2.afiseaza_pachetele(nume2)
+
+#contorizam rundele
+round = 0
+
+print("       START JOC ")
+#pentru a putea fi parcurs mai usor, afisarea fiecarei runde se face prin a apasa tasta enter
+wait = input("\nApasa ENTER pentru a incepe!")
+#impunem conditia ca atunci cand un pachet devine gol sa se termine afisarea
+while (jucator1.incheiere()!=0 and jucator2.incheiere()!=0):
+    #la fiecare afisare creste si runda
+    round += 1
+    print()
+    print("-----------------------------------------")
+    print()
+    print("Runda:", round)
+    wait = input("Apasa ENTER pentru a juca runda ")
+    print()
+    jucator1.joaca_carte(jucator2)
