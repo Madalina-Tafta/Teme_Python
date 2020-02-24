@@ -1,0 +1,114 @@
+def functie(f):
+
+######### am creat lista principala care contine toate elementele fisierului:
+
+    lista_principala = f.readlines()
+    lista_secundara = []
+    a = []
+    b = []
+    c = []
+    d = []
+    avg = 0
+    dictionar = {}
+########## am creat lista secundara in interiorul listei principale care contine elementele de pe linii :
+    for i in lista_principala:
+        lista_secundara.append(i[:-1].split('\t'))
+######### am creat 4 liste inlantuite cu elementele de pe fiecare coloana:
+    for i in lista_secundara:
+        a.append(i[0:1]+i[3:4])
+        b.append(i[1:2])
+        c.append(i[2:3])
+        d.append(i[4:5])
+
+########## am creat dictionarul care contine nume tip string si salariu tip integer
+    for i in a:
+        for j in range(1,len(i)):
+            i[j]=int(i[j])
+    dictionar_nume_plus_salariu=dict(a)
+
+########## am creat listele simple cu elementele de pe fiecare coloana:
+
+#age: am creat lista care contine coloana varsta angajatilor de tip integer:
+    coloana_varsta = []
+    for i in b:
+        for j in i:
+            coloana_varsta.append(j)
+    for i in range(0,len(coloana_varsta)):
+        coloana_varsta[i]=int(coloana_varsta[i])
+
+#ocupation: am creat lista care contine coloana ocupatie de tip string:
+    coloana_ocupatie = []
+    for i in c:
+        for j in i:
+            coloana_ocupatie.append(j)
+
+#years_in_the_company: am creat lista care contine coloana ani in companie de tip integer:
+    coloana_ani_in_companie= []
+    for i in d:
+        for j in i:
+            coloana_ani_in_companie.append(j)
+    for i in range(0,len(coloana_ani_in_companie)):
+        coloana_ani_in_companie[i]=int(coloana_ani_in_companie[i])
+
+################################### MEDIA DE VARSTA A ANGAJATILOR ###############################
+    for i in coloana_varsta:
+        n = len(coloana_varsta)
+        i = int(i)
+        avg = avg + i / n
+    dictionar['avarage_age']=avg
+
+################################### MAXIMUL SALARIULUI ##########################################
+    best_paid_job=max(dictionar_nume_plus_salariu.values())
+    dictionar['best_paid_job']=best_paid_job
+
+################################### NUMELE PERSOANEI CEL MAI BINE PLATITE ########################
+    for key,value in dictionar_nume_plus_salariu.items():
+        if value==max(dictionar_nume_plus_salariu.values()):
+            best_paid_employee=key
+    dictionar['best_paid_employee']=best_paid_employee
+
+#################################### TOP 3 JOBURI ##################################################
+    jobs={}
+    for i in coloana_ocupatie:
+        if i not in jobs:
+             jobs.update({i:1})
+        else:
+            jobs[i]= jobs[i]+1
+    job_sortat = dict(sorted(jobs.items(), reverse= True))
+    import operator
+    for key in sorted(job_sortat.values()):
+        sortare = sorted(job_sortat.items(), key=operator.itemgetter(1))
+    x=[]
+    for i in sortare:
+        x.append(i[0])
+    dictionar['top_3_jobs'] = x[-1:]+x[-2:-1]+x[-3:-2]
+
+################################### NUMARUL ANGAJATILOR IN COMPANIE ###############################
+    for key in dictionar_nume_plus_salariu.keys():
+        no_employees=len(dictionar_nume_plus_salariu.keys())
+    dictionar['no_employees']:no_employees
+
+################################### NUMARUL SENIORILOR,MIDDLE SI JUNIORI ###########################
+    no_middle=0
+    no_seniors=0
+    no_juniors=0
+    for i in coloana_ani_in_companie:
+        if i<3:
+            no_juniors = no_juniors + 1
+
+        elif i > 5:
+            no_seniors =no_seniors + 1
+        else:
+            no_middle = no_middle + 1
+    dictionar['seniors']=no_seniors
+    dictionar['middle']=no_middle
+    dictionar['juniors']=no_juniors
+
+
+################################### OUTPUT #########################################################
+    print(dictionar)
+    return(dictionar)
+
+
+with open('fisier1.txt',mode='r',encoding='utf-8')as file:
+    functie(file)
